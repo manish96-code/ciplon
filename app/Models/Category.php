@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 
 class Category extends Model
@@ -57,6 +58,24 @@ class Category extends Model
     public function updater(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /**
+     * Products belonging to this category.
+     */
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    /**
+     * Polymorphic category images.
+     */
+    public function images(): MorphMany
+    {
+        return $this->morphMany(Image::class, 'model')
+            ->where('collection', 'category-image')
+            ->orderBy('sort_order');
     }
 
     /**
