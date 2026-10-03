@@ -28,17 +28,13 @@ class Image extends Model
         'url',
     ];
 
-    /**
-     * Polymorphic relation to the parent model (Product, Category, etc.).
-     */
+    // Polymorphic relation to the parent model (Product, Category, etc.).
     public function model(): MorphTo
     {
         return $this->morphTo();
     }
 
-    /**
-     * Accessor for full public image URL.
-     */
+    // Accessor for full public image URL.
     public function getUrlAttribute(): ?string
     {
         if (empty($this->file_path)) {

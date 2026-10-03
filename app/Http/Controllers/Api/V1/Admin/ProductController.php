@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Enums\ProductStatus;
 use App\Http\Controllers\Controller;
+use App\Jobs\UploadProductImageJob;
 use App\Models\Image;
 use App\Models\Product;
 use App\Services\ImageKitService;
@@ -16,9 +17,7 @@ use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a paginated listing of products with filters.
-     */
+    // Display a paginated listing of products with filters.
     public function index(Request $request): JsonResponse
     {
         $query = Product::query()
@@ -71,9 +70,7 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created product in database.
-     */
+    // Store a newly created product in database.
     public function store(Request $request, ImageKitService $imageKit): JsonResponse
     {
         // Decode compositions if sent as a JSON string in multipart/form-data
@@ -108,7 +105,7 @@ class ProductController extends Controller
             'images.*' => ['file', 'mimes:jpeg,png,jpg,webp', 'max:10240'],
         ]);
 
-        $product = DB::transaction(function () use ($validated, $request, $imageKit) {
+        $product = DB::transaction(function () use ($validated, $request) {
             $product = Product::create([
                 'category_id' => $validated['category_id'],
                 'brand_name' => $validated['brand_name'],
@@ -143,11 +140,19 @@ class ProductController extends Controller
                 }
             }
 
-            // Handle image uploads
+            // Handle image uploads via queued background job
             if ($request->hasFile('images')) {
                 $sortOrder = 0;
                 foreach ($request->file('images') as $file) {
-                    $this->storeProductImage($product, $file, $imageKit, $sortOrder++);
+                    $tempPath = $file->store('temp-uploads', 'local');
+                    UploadProductImageJob::dispatch(
+                        productId: $product->id,
+                        tempRelativePath: $tempPath,
+                        originalFileName: $file->getClientOriginalName(),
+                        mimeType: $file->getClientMimeType(),
+                        fileSize: $file->getSize(),
+                        sortOrder: $sortOrder++
+                    );
                 }
             }
 
@@ -163,9 +168,7 @@ class ProductController extends Controller
         ], 201);
     }
 
-    /**
-     * Display the specified product.
-     */
+    // Display the specified product.
     public function show(Product $product): JsonResponse
     {
         $product->load([
@@ -183,9 +186,7 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified product in database.
-     */
+    // Update the specified product in database.
     public function update(Request $request, Product $product, ImageKitService $imageKit): JsonResponse
     {
         if ($request->has('compositions') && is_string($request->input('compositions'))) {
@@ -280,11 +281,19 @@ class ProductController extends Controller
                 }
             }
 
-            // Upload new images
+            // Upload new images via queued background job
             if ($request->hasFile('images')) {
                 $currentMaxSort = (int) $product->images()->max('sort_order');
                 foreach ($request->file('images') as $file) {
-                    $this->storeProductImage($product, $file, $imageKit, ++$currentMaxSort);
+                    $tempPath = $file->store('temp-uploads', 'local');
+                    UploadProductImageJob::dispatch(
+                        productId: $product->id,
+                        tempRelativePath: $tempPath,
+                        originalFileName: $file->getClientOriginalName(),
+                        mimeType: $file->getClientMimeType(),
+                        fileSize: $file->getSize(),
+                        sortOrder: ++$currentMaxSort
+                    );
                 }
             }
         });
@@ -298,9 +307,7 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified product and its compositions and images.
-     */
+    // Remove the specified product and its compositions and images.
     public function destroy(Product $product, ImageKitService $imageKit): JsonResponse
     {
         DB::transaction(function () use ($product, $imageKit) {
@@ -326,9 +333,7 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Update product status.
-     */
+    // Update product status.
     public function updateStatus(Request $request, Product $product): JsonResponse
     {
         $validated = $request->validate([
@@ -347,9 +352,7 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Helper to store uploaded product image to ImageKit or fallback to local disk.
-     */
+    // Helper to store uploaded product image to ImageKit or fallback to local disk.
     protected function storeProductImage(Product $product, $file, ImageKitService $imageKit, int $sortOrder): Image
     {
         try {

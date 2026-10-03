@@ -41,25 +41,19 @@ class Product extends Model
         'is_featured' => 'boolean',
     ];
 
-    /**
-     * Category that this product belongs to.
-     */
+    // Category that this product belongs to.
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    /**
-     * Product compositions / active ingredients.
-     */
+    // Product compositions / active ingredients.
     public function compositions(): HasMany
     {
         return $this->hasMany(ProductComposition::class);
     }
 
-    /**
-     * Polymorphic product images.
-     */
+    // Polymorphic product images.
     public function images(): MorphMany
     {
         return $this->morphMany(Image::class, 'model')
@@ -68,9 +62,7 @@ class Product extends Model
             ->orderBy('id');
     }
 
-    /**
-     * Primary / first display image.
-     */
+    // Primary / first display image.
     public function primaryImage(): MorphOne
     {
         return $this->morphOne(Image::class, 'model')
@@ -79,25 +71,19 @@ class Product extends Model
             ->orderBy('id');
     }
 
-    /**
-     * User who created the product record.
-     */
+    // User who created the product record.
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    /**
-     * User who last updated the product record.
-     */
+    // User who last updated the product record.
     public function updater(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
 
-    /**
-     * Generate a unique slug for the product.
-     */
+    // Generate a unique slug for the product.
     public static function generateUniqueSlug(string $name, ?int $ignoreId = null): string
     {
         $baseSlug = Str::slug($name);

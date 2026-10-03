@@ -28,49 +28,37 @@ class Category extends Model
         'status' => CategoryStatus::class,
     ];
 
-    /**
-     * Parent category relationship.
-     */
+    // Parent category relationship.
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'parent_id');
     }
 
-    /**
-     * Immediate children categories.
-     */
+    // Immediate children categories.
     public function children(): HasMany
     {
         return $this->hasMany(Category::class, 'parent_id');
     }
 
-    /**
-     * User who created the category.
-     */
+    // User who created the category.
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    /**
-     * User who last updated the category.
-     */
+    // User who last updated the category.
     public function updater(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
 
-    /**
-     * Products belonging to this category.
-     */
+    // Products belonging to this category.
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
     }
 
-    /**
-     * Polymorphic category images.
-     */
+    // Polymorphic category images.
     public function images(): MorphMany
     {
         return $this->morphMany(Image::class, 'model')
@@ -78,9 +66,7 @@ class Category extends Model
             ->orderBy('sort_order');
     }
 
-    /**
-     * Generate a unique slug for the category.
-     */
+    // Generate a unique slug for the category.
     public static function generateUniqueSlug(string $name, ?int $ignoreId = null): string
     {
         $baseSlug = Str::slug($name);
@@ -97,11 +83,7 @@ class Category extends Model
         return $slug;
     }
 
-    /**
-     * Recursively retrieve all descendant IDs.
-     *
-     * @return array<int>
-     */
+    // Recursively retrieve all descendant IDs.
     public function descendantIds(): array
     {
         $ids = [];
