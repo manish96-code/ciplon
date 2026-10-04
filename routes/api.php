@@ -14,8 +14,11 @@ Route::get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     // Authentication
     Route::post('login', [AuthController::class, 'login']);
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('me', [AuthController::class, 'me']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::get('me', [AuthController::class, 'me']);
+    });
 
     // Public Company Profile
     Route::get('company-profile', [SettingController::class, 'publicProfile']);
@@ -23,7 +26,7 @@ Route::prefix('v1')->group(function () {
     Route::get('products', [ProductController::class, 'index']);
     Route::get('products/{product}', [ProductController::class, 'show']);
 
-    Route::prefix('admin')->group(function () {
+    Route::prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function () {
         // Category Management
         Route::get('categories', [CategoryController::class, 'index']);
         Route::post('categories', [CategoryController::class, 'store']);

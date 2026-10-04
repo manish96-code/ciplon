@@ -1,9 +1,33 @@
 <?php
 
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->user = User::factory()->admin()->create();
+    Sanctum::actingAs($this->user);
+});
+
+test('unauthenticated access to admin categories is unauthorized', function () {
+    app('auth')->forgetGuards();
+
+    $response = $this->getJson('/api/v1/admin/categories');
+
+    $response->assertStatus(401);
+});
+
+test('non-admin user cannot access admin categories', function () {
+    $regularUser = User::factory()->create(['role' => 'user']);
+    Sanctum::actingAs($regularUser);
+
+    $response = $this->getJson('/api/v1/admin/categories');
+
+    $response->assertStatus(403);
+});
 
 test('category can be created and saved in database via api', function () {
     $payload = [

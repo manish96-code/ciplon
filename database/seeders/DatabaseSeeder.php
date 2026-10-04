@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'System Administrator',
                 'password' => Hash::make('123456789'),
+                'role' => 'admin',
                 'email_verified_at' => now(),
             ]
         );
@@ -30,6 +31,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Test Admin',
                 'password' => Hash::make('123456789'),
+                'role' => 'user',
                 'email_verified_at' => now(),
             ]
         );

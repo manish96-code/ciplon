@@ -21,11 +21,31 @@ class AuthController extends Controller
 
         $user = User::where('email', $validated['email'])->first();
 
-        if (! $user || ! Hash::check($validated['password'], $user->password)) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'The provided credentials do not match our records.',
+                'message' => 'No account found with this email address.',
+                'errors' => [
+                    'email' => ['No account found with this email address.'],
+                ],
             ], 422);
+        }
+
+        if (! Hash::check($validated['password'], $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The password you entered is incorrect.',
+                'errors' => [
+                    'password' => ['The password you entered is incorrect.'],
+                ],
+            ], 422);
+        }
+
+        if ($user->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Access denied. Administrator privileges required.',
+            ], 403);
         }
 
         $token = null;
@@ -49,6 +69,7 @@ class AuthController extends Controller
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
+                    'role' => $user->role,
                 ],
                 'token' => $token,
             ],

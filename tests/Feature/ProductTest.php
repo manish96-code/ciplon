@@ -2,9 +2,33 @@
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->user = User::factory()->admin()->create();
+    Sanctum::actingAs($this->user);
+});
+
+test('unauthenticated access to admin products is unauthorized', function () {
+    app('auth')->forgetGuards();
+
+    $response = $this->getJson('/api/v1/admin/products');
+
+    $response->assertStatus(401);
+});
+
+test('non-admin user cannot access admin products', function () {
+    $regularUser = User::factory()->create(['role' => 'user']);
+    Sanctum::actingAs($regularUser);
+
+    $response = $this->getJson('/api/v1/admin/products');
+
+    $response->assertStatus(403);
+});
 
 test('product can be created with compositions via api', function () {
     $category = Category::create([

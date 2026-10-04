@@ -101,7 +101,7 @@ class ProductController extends Controller
             'compositions.*.strength' => ['required_with:compositions', 'string', 'max:100'],
             'compositions.*.unit' => ['nullable', 'string', 'max:50'],
             'images' => ['nullable', 'array'],
-            'images.*' => ['file', 'mimes:jpeg,png,jpg,webp', 'max:10240'],
+            'images.*' => ['file', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
         $product = DB::transaction(function () use ($validated, $request) {
@@ -225,7 +225,7 @@ class ProductController extends Controller
             'removed_image_ids' => ['nullable', 'array'],
             'removed_image_ids.*' => ['integer'],
             'images' => ['nullable', 'array'],
-            'images.*' => ['file', 'mimes:jpeg,png,jpg,webp', 'max:10240'],
+            'images.*' => ['file', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
         $slug = $product->brand_name !== $validated['brand_name']
