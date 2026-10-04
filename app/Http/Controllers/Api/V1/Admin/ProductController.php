@@ -11,7 +11,6 @@ use App\Services\ImageKitService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
@@ -350,39 +349,5 @@ class ProductController extends Controller
             'message' => 'Product status updated successfully.',
             'data' => $product,
         ]);
-    }
-
-    // Helper to store uploaded product image to ImageKit or fallback to local disk.
-    protected function storeProductImage(Product $product, $file, ImageKitService $imageKit, int $sortOrder): Image
-    {
-        try {
-            $uploadData = $imageKit->upload($file, '/products');
-
-            return $product->images()->create([
-                'collection' => 'product-image',
-                'file_name' => $uploadData['file_name'],
-                'file_path' => $uploadData['url'],
-                'mime_type' => $uploadData['mime_type'],
-                'disk' => 'imagekit',
-                'size' => $uploadData['size'],
-                'alt_text' => $uploadData['file_id'], // Store file_id in alt_text for deletion API
-                'sort_order' => $sortOrder,
-            ]);
-        } catch (\Throwable $e) {
-            Log::warning('ImageKit upload fallback to local storage: '.$e->getMessage());
-
-            $path = $file->store('products', 'public');
-
-            return $product->images()->create([
-                'collection' => 'product-image',
-                'file_name' => $file->getClientOriginalName(),
-                'file_path' => $path,
-                'mime_type' => $file->getClientMimeType(),
-                'disk' => 'public',
-                'size' => $file->getSize(),
-                'alt_text' => null,
-                'sort_order' => $sortOrder,
-            ]);
-        }
     }
 }

@@ -88,38 +88,11 @@ class UploadProductImageJob implements ShouldQueue
     // Handle a job failure when all retries are exhausted.
     public function failed(?\Throwable $exception): void
     {
-        Log::warning("UploadProductImageJob failed after attempts for Product #{$this->productId}, falling back to public storage.");
+        Log::error("UploadProductImageJob permanently failed for Product #{$this->productId}: ".($exception ? $exception->getMessage() : 'Unknown error'));
 
         $disk = Storage::disk('local');
-        $fullPath = $disk->path($this->tempRelativePath);
-
-        if (! file_exists($fullPath)) {
-            return;
-        }
-
-        $product = Product::find($this->productId);
-        if (! $product) {
+        if ($disk->exists($this->tempRelativePath)) {
             $disk->delete($this->tempRelativePath);
-
-            return;
         }
-
-        $extension = pathinfo($this->originalFileName, PATHINFO_EXTENSION);
-        $publicPath = 'products/'.uniqid().'.'.$extension;
-
-        Storage::disk('public')->put($publicPath, file_get_contents($fullPath));
-
-        $product->images()->create([
-            'collection' => 'product-image',
-            'file_name' => $this->originalFileName,
-            'file_path' => $publicPath,
-            'mime_type' => $this->mimeType ?? 'image/jpeg',
-            'disk' => 'public',
-            'size' => $this->fileSize ?? (filesize($fullPath) ?: 0),
-            'alt_text' => null,
-            'sort_order' => $this->sortOrder,
-        ]);
-
-        $disk->delete($this->tempRelativePath);
     }
 }

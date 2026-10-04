@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Admin\CategoryController;
 use App\Http\Controllers\Api\V1\Admin\ProductController;
+use App\Http\Controllers\Api\V1\Admin\SettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -10,6 +11,9 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::prefix('v1')->group(function () {
+    // Public Company Profile
+    Route::get('company-profile', [SettingController::class, 'publicProfile']);
+
     Route::prefix('admin')->group(function () {
         // Category Management
         Route::get('categories', [CategoryController::class, 'index']);
@@ -26,5 +30,9 @@ Route::prefix('v1')->group(function () {
         Route::match(['put', 'post'], 'products/{product}', [ProductController::class, 'update']);
         Route::delete('products/{product}', [ProductController::class, 'destroy']);
         Route::patch('products/{product}/status', [ProductController::class, 'updateStatus']);
+
+        // Business Settings & Company Profile
+        Route::get('settings', [SettingController::class, 'index']);
+        Route::match(['put', 'post'], 'settings', [SettingController::class, 'update']);
     });
 });
