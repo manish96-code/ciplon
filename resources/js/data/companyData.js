@@ -3,14 +3,14 @@
  * Structure matches future Laravel API: GET /api/v1/company-profile or /api/v1/settings
  */
 export const companyProfile = {
-  name: "ApexBio Life Sciences",
-  legalName: "ApexBio Pharmaceuticals Ltd.",
+  name: "Ciplon Life Sciences",
+  legalName: "Ciplon Pharmaceuticals Ltd.",
   tagline: "Advancing Global Healthcare Through Scientific Precision & Quality",
   description: "A research-driven pharmaceutical enterprise dedicated to developing, manufacturing, and supplying high-quality finished formulations across diverse therapeutic areas.",
   foundedYear: 2004,
   headquarters: "Innovation Park, Sector 62, Bio-Tech Corridor",
-  email: "corporate@apexbio-pharma.com",
-  enquiriesEmail: "enquiry@apexbio-pharma.com",
+  email: "corporate@ciplon.com",
+  enquiriesEmail: "enquiry@ciplon.com",
   phone: "+1 (800) 458-7290",
   businessHours: "Monday – Friday: 09:00 – 18:00 (EST)",
   
@@ -68,3 +68,4 @@ export const companyProfile = {
     }
   ]
 };
+

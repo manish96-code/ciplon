@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
 // Public Routes
-
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/products', [ProductCatalogController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [ProductCatalogController::class, 'show'])->name('products.show');
@@ -19,7 +18,6 @@ Route::post('/products/{product}/enquiry', [ProductCatalogController::class, 'st
 Route::post('/enquiry', [ProductCatalogController::class, 'storeEnquiry'])->name('enquiry.store');
 
 // Authentication Routes
-
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::get('/admin/login', fn () => redirect()->route('login'));
@@ -30,8 +28,7 @@ Route::post('/logout', [LoginController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
-// Admin Backoffice Routes
-
+// Admin Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -67,7 +64,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 // Storage Asset Fallback
-
 Route::get('/storage/{path}', function (string $path) {
     if (! Storage::disk('public')->exists($path)) {
         abort(404);

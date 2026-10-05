@@ -1,73 +1,59 @@
-import { ArrowRight } from 'lucide-react';
+﻿import { ArrowRight, Award } from 'lucide-react';
 import Container from '../common/Container';
 
-export default function EditorialBanner({ onOpenEnquiryModal }) {
-  return (
-    <section id="manufacturing" className="py-10 sm:py-14 bg-slate-50/50 text-slate-900 relative overflow-hidden border-y border-slate-100">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-teal-500/5 rounded-full blur-[140px] pointer-events-none" />
+export default function EditorialBanner({ onContactUs }) {
+  const stats = [
+    { value: "250+", label: "Finished Formulations", sub: "Solid, liquid & inhalation" },
+    { value: "15+", label: "Therapeutic Segments", sub: "Acute & chronic care" },
+    { value: "45+", label: "Export Markets", sub: "Global regulatory supply" },
+    { value: "100%", label: "WHO-GMP Certified", sub: "Fully validated facilities" },
+  ];
 
-      <Container>
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center justify-center gap-2 mb-5">
-            <span className="h-px w-8 bg-teal-600/40"></span>
-            <span className="text-xs uppercase tracking-widest text-teal-800 font-bold">
-              The Formulation Principle
-            </span>
-            <span className="h-px w-8 bg-teal-600/40"></span>
+  return (
+    <section id="manufacturing" className="py-16 sm:py-20 bg-gradient-to-b from-slate-50 via-white to-slate-50/70 text-slate-900 relative overflow-hidden border-y border-slate-200">
+      <Container className="relative z-10">
+        <div className="max-w-5xl mx-auto text-center space-y-8">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-50 border border-teal-200 text-xs font-bold text-teal-900 shadow-2xs">
+            <Award className="w-4 h-4 text-teal-700" />
+            <span>The Ciplon Formulation Charter</span>
           </div>
 
-          <div className="text-center space-y-6">
-            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight">
-              <span className="text-slate-900 hover:text-teal-700 transition-colors">Science</span>
-              <span className="text-teal-600 text-xl sm:text-3xl font-light">+</span>
-              <span className="text-slate-900 hover:text-teal-700 transition-colors">Technology</span>
-              <span className="text-teal-600 text-xl sm:text-3xl font-light">+</span>
-              <span className="text-slate-900 hover:text-teal-700 transition-colors">Quality</span>
-              <span className="text-teal-600 text-2xl sm:text-4xl font-light">=</span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-700 via-teal-800 to-emerald-700">
-                Better Healthcare
-              </span>
-            </div>
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-950 leading-tight">
+            Advancing Human Health Through <br className="hidden sm:inline" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-800 via-teal-700 to-emerald-700">
+              Scientific Precision & Uncompromising Quality
+            </span>
+          </h2>
 
-            <p className="max-w-3xl mx-auto text-sm sm:text-base text-slate-600 font-light leading-relaxed pt-1">
-              "We believe pharmaceutical development is more than manufacturing tablets and capsules. It is the disciplined commitment to reproducible potency, clinical stability, and patient safety across every single dosage unit."
-            </p>
+          <p className="max-w-3xl mx-auto text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
+            "Pharmaceutical manufacturing is more than producing tablets and capsules. It is our disciplined commitment to reproducible potency, clinical stability, and patient safety across every single dosage unit."
+          </p>
 
-            <div className="pt-6 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 text-left border-t border-slate-200/60">
-              <div className="space-y-1.5 bg-white p-5 rounded-2xl border border-slate-100">
-                <span className="text-[10px] font-mono font-bold text-teal-700">01 / SCIENTIFIC RIGOR</span>
-                <h3 className="text-sm sm:text-base font-bold text-slate-900">Molecule Optimization</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Engineered excipient ratios that preserve therapeutic integrity while optimizing patient adherence and bioavailability.
-                </p>
+          {/* Corporate Stats Banner - Light Theme */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-4">
+            {stats.map((stat, i) => (
+              <div key={i} className="p-6 rounded-2xl bg-white border border-slate-200/90 text-center shadow-xs">
+                <div className="text-2xl sm:text-4xl font-extrabold text-teal-700 font-mono tracking-tight">
+                  {stat.value}
+                </div>
+                <div className="text-xs sm:text-sm font-bold text-slate-900 mt-1">
+                  {stat.label}
+                </div>
+                <div className="text-[11px] text-slate-500 font-medium mt-0.5">
+                  {stat.sub}
+                </div>
               </div>
+            ))}
+          </div>
 
-              <div className="space-y-1.5 bg-white p-5 rounded-2xl border border-slate-100">
-                <span className="text-[10px] font-mono font-bold text-teal-700">02 / ADVANCED AUTOMATION</span>
-                <h3 className="text-sm sm:text-base font-bold text-slate-900">Controlled Precision</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Automated processing suites minimize manual contact, guaranteeing consistent uniformity across commercial production batches.
-                </p>
-              </div>
-
-              <div className="space-y-1.5 bg-white p-5 rounded-2xl border border-slate-100">
-                <span className="text-[10px] font-mono font-bold text-teal-700">03 / UNCOMPROMISING RELEASE</span>
-                <h3 className="text-sm sm:text-base font-bold text-slate-900">Total Batch Validation</h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Every lot undergoes multi-parameter physicochemical and microbiological inspection before commercial distribution.
-                </p>
-              </div>
-            </div>
-
-            <div className="pt-4 flex justify-center">
-              <a
-                href="#contact"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold transition-colors cursor-pointer"
-              >
-                <span>Consult Our Technical Formulation Team</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </a>
-            </div>
+          <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+            <button
+              onClick={onContactUs}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs sm:text-sm transition-all cursor-pointer shadow-md shadow-teal-700/15"
+            >
+              <span>Consult Our Regulatory Formulation Team</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </Container>

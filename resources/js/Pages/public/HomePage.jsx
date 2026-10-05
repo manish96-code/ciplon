@@ -1,3 +1,4 @@
+﻿import { useState } from 'react';
 import { router, usePage } from '@inertiajs/react';
 import PublicLayout from '../../layouts/PublicLayout';
 import HeroSection from '../../components/home/HeroSection';
@@ -8,6 +9,7 @@ import ResearchSection from '../../components/home/ResearchSection';
 import EditorialBanner from '../../components/home/EditorialBanner';
 import NewsPreview from '../../components/home/NewsPreview';
 import CTASection from '../../components/home/CTASection';
+import EnquiryModal from '../../components/home/EnquiryModal';
 import { therapeuticAreas as defaultAreas } from '../../data/therapeuticAreasData';
 import { latestNews as defaultNews } from '../../data/newsData';
 
@@ -17,6 +19,7 @@ export default function HomePage({ featuredProducts = [], categories = [], compa
   const products = featuredProducts.length > 0 ? featuredProducts : [];
   const therapeuticAreas = defaultAreas;
   const news = defaultNews;
+  const [isEnquiryModalOpen, setIsEnquiryModalOpen] = useState(false);
 
   // Smooth scroll helper to products catalog
   const handleScrollToProducts = () => {
@@ -26,12 +29,9 @@ export default function HomePage({ featuredProducts = [], categories = [], compa
     }
   };
 
-  // Smooth scroll helper to contact section
+  // Smooth scroll helper to contact section or open modal
   const handleScrollToContact = () => {
-    const el = document.getElementById('contact');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+    setIsEnquiryModalOpen(true);
   };
 
   // Navigate to products catalog filtered by selected therapeutic area
@@ -49,6 +49,7 @@ export default function HomePage({ featuredProducts = [], categories = [], compa
         <HeroSection
           onExploreProducts={handleScrollToProducts}
           onContactUs={handleScrollToContact}
+          onOpenEnquiryModal={() => setIsEnquiryModalOpen(true)}
         />
 
         <FeaturedProducts products={products} />
@@ -69,7 +70,12 @@ export default function HomePage({ featuredProducts = [], categories = [], compa
           onReadNews={handleScrollToContact}
         />
 
-        <CTASection />
+        <CTASection onOpenEnquiryModal={() => setIsEnquiryModalOpen(true)} />
+
+        <EnquiryModal
+          isOpen={isEnquiryModalOpen}
+          onClose={() => setIsEnquiryModalOpen(false)}
+        />
       </div>
     </PublicLayout>
   );

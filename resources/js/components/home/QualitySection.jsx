@@ -1,124 +1,108 @@
-import { ShieldCheck, Cpu, Gauge, ClipboardCheck, ArrowRight } from 'lucide-react';
+﻿import { ShieldCheck, Cpu, Gauge, ClipboardCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
 import Container from '../common/Container';
 import SectionHeading from '../common/SectionHeading';
 import Button from '../common/Button';
 
-export default function QualitySection({ onOpenEnquiryModal }) {
+export default function QualitySection({ onContactUs }) {
   const qualityPillars = [
     {
       icon: ShieldCheck,
-      title: "Quality-Driven Processes",
-      description: "Standard operating procedures governing every stage from raw API receipt to secondary finished packaging."
+      title: "Raw Material API Assay & Qualification",
+      description: "Rigorous chemical assay, microbial limit testing, and complete impurity profiling on all active ingredients prior to manufacturing."
     },
     {
       icon: Gauge,
-      title: "Advanced Manufacturing",
-      description: "Equipped with precision compression, high-speed blister sealing, and automated particulate inspection."
+      title: "In-Process Quality Controls (IPQC)",
+      description: "Automated weight variation, hardness, friability, disintegration, and laser-guided particulate inspection on all compression lines."
     },
     {
       icon: ClipboardCheck,
-      title: "Rigorous Quality Checks",
-      description: "Validated analytical methods, High-Performance Liquid Chromatography (HPLC), and dissolution profiling."
+      title: "Validated Analytical HPLC Testing",
+      description: "High-Performance Liquid Chromatography (HPLC), dissolution profiling in simulated body fluids, and multi-media bioequivalence verification."
     },
     {
       icon: Cpu,
-      title: "Continuous Improvement",
-      description: "Data-driven CAPA frameworks, environmental HVAC controls, and continuous stability chamber monitoring."
+      title: "ICH Zone IVB Climatic Stability Testing",
+      description: "Accelerated and real-time stability chambers monitoring finished formulations under 30°C / 75% RH tropical environmental conditions."
     }
   ];
 
   return (
-    <section id="quality" className="py-10 lg:py-14 bg-white border-b border-slate-100">
+    <section id="quality" className="py-14 lg:py-20 bg-slate-50 border-b border-slate-200/80">
       <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          {/* Left Column: Authentic Lab Facility Showcase */}
           <div className="lg:col-span-5 order-2 lg:order-1">
-            <div className="rounded-2xl bg-slate-50 text-slate-900 p-6 sm:p-7 relative overflow-hidden border border-slate-100">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative">
+              <div className="rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-xl relative group">
+                <img
+                  src="/images/ciplon_lab.jpg"
+                  alt="Ciplon Formulation Research and Analytical Testing Laboratory"
+                  className="w-full h-80 sm:h-96 object-cover transform group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
 
-              <div className="flex items-center justify-between pb-4 border-b border-slate-200/60">
+                <div className="absolute bottom-0 inset-x-0 p-5 text-white">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-bold text-teal-400 uppercase tracking-wider">Analytical R&D Suite</p>
+                      <h4 className="text-sm font-semibold text-white mt-0.5">Chromatographic Purity & Assay</h4>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-teal-500/20 border border-teal-400/40 text-teal-300">
+                      GLP Compliant
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Quality Badge */}
+              <div className="absolute -bottom-5 -right-3 sm:-bottom-6 sm:-right-4 bg-white rounded-2xl p-4 shadow-xl border border-slate-200 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 border border-teal-200 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-5 h-5 text-teal-600 stroke-[2.2]" />
+                </div>
                 <div>
-                  <span className="text-[11px] font-mono tracking-wider uppercase text-teal-800 font-bold">
-                    Quality Management Protocol
-                  </span>
-                  <h3 className="text-base font-bold text-slate-900 mt-0.5">Multi-Stage Quality Gates</h3>
+                  <p className="text-xs font-bold text-slate-900">Zero-Defect Standard</p>
+                  <p className="text-[10px] text-slate-500 font-medium">100% Certificate of Analysis (COA)</p>
                 </div>
-                <div className="w-9 h-9 rounded-xl bg-teal-50 border border-teal-200 text-teal-700 flex items-center justify-center">
-                  <ShieldCheck className="w-5 h-5 stroke-[2.2]" />
-                </div>
-              </div>
-
-              <div className="py-4 space-y-2.5">
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-white border border-slate-100">
-                  <div className="w-6 h-6 rounded-full bg-teal-50 border border-teal-200 text-teal-800 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                    01
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900">Raw Material Qualification</h4>
-                    <p className="text-xs text-slate-600 mt-0.5">Comprehensive chemical assay & microbial limit testing on all active ingredients.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-white border border-slate-100">
-                  <div className="w-6 h-6 rounded-full bg-teal-50 border border-teal-200 text-teal-800 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                    02
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900">In-Process Blend & Compression Control</h4>
-                    <p className="text-xs text-slate-600 mt-0.5">Automated weight variation, hardness, friability, and disintegration monitoring.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-xl bg-white border border-slate-100">
-                  <div className="w-6 h-6 rounded-full bg-teal-50 border border-teal-200 text-teal-800 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                    03
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900">Finished Product Release & Stability</h4>
-                    <p className="text-xs text-slate-600 mt-0.5">Accelerated & real-time stability verification with electronic batch records.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-200/60 text-xs text-slate-600 flex items-center justify-between font-medium">
-                <span>Analytical Precision: Standardized</span>
-                <span className="text-teal-700 font-mono font-bold">100% Lot Inspection</span>
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-7 order-1 lg:order-2 space-y-4">
+          {/* Right Column: Quality Pillars & Overview */}
+          <div className="lg:col-span-7 order-1 lg:order-2 space-y-6">
             <SectionHeading
               badge="Quality Framework"
-              title="Quality at Every Stage"
-              subtitle="From research and development to manufacturing, quality remains at the center of everything we do."
-              description="Our manufacturing philosophy centers on quality risk management. We enforce rigorous in-process verification to guarantee that every formulation consistently meets strict chemical, physical, and microbiological specifications."
+              title="Built on Rigorous Science and Stringent GMP Protocols"
+              subtitle="Every single batch undergoes multi-stage chemical, physical, and microbiological verification."
+              description="Our manufacturing philosophy centers on proactive quality risk management. We enforce stringent standard operating procedures across every phase, ensuring our finished dosage formulations deliver consistent therapeutic efficacy."
               align="left"
               className="mb-4"
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
               {qualityPillars.map((item, idx) => {
                 const Icon = item.icon;
                 return (
-                  <div key={idx} className="p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-teal-200 transition-colors">
-                    <div className="w-9 h-9 rounded-lg bg-teal-50 border border-teal-200/60 text-teal-700 flex items-center justify-center mb-2.5">
+                  <div key={idx} className="p-4 rounded-2xl bg-white border border-slate-200/80 hover:border-teal-500/40 transition-all shadow-xs">
+                    <div className="w-9 h-9 rounded-xl bg-teal-50 border border-teal-200/60 text-teal-700 flex items-center justify-center mb-3">
                       <Icon className="w-4.5 h-4.5" />
                     </div>
-                    <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-0.5">{item.title}</h3>
+                    <h3 className="text-sm font-bold text-slate-900 mb-1">{item.title}</h3>
                     <p className="text-xs text-slate-600 leading-relaxed">{item.description}</p>
                   </div>
                 );
               })}
             </div>
 
-            <div className="pt-2">
+            <div className="pt-2 flex items-center gap-4">
               <Button
-                variant="medical"
+                variant="primary"
                 size="md"
                 icon={ArrowRight}
-                href="#about"
+                onClick={onContactUs}
+                className="bg-teal-700 hover:bg-teal-800 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-xs"
               >
-                Learn About Our Quality Standards
+                Request Quality Dossier & COA
               </Button>
             </div>
           </div>
