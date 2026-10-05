@@ -1,18 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Image;
 use App\Models\Setting;
 use App\Services\ImageKitService;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class SettingController extends Controller
 {
     // Retrieve all settings grouped by category and flat key-value pairs for admin management.
-    public function index(): JsonResponse
+    public function index(): Response
     {
         $grouped = Setting::getAllGrouped();
         $flat = Setting::getPublicMap();
@@ -28,17 +30,14 @@ class SettingController extends Controller
             };
         }
 
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'grouped' => $grouped,
-                'settings' => $flat,
-            ],
+        return Inertia::render('admin/settings/Settings', [
+            'grouped' => $grouped,
+            'settings' => $flat,
         ]);
     }
 
     // Update settings in bulk and handle optional logo/image uploads.
-    public function update(Request $request, ImageKitService $imageKit): JsonResponse
+    public function update(Request $request, ImageKitService $imageKit): RedirectResponse
     {
         $validated = $request->validate([
             'settings' => ['nullable'],
@@ -112,47 +111,7 @@ class SettingController extends Controller
             }
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Business profile and settings updated successfully.',
-            'data' => Setting::getPublicMap(),
-        ]);
-    }
-
-    // Public endpoint for frontend landing page and footer to consume company profile.
-    public function publicProfile(): JsonResponse
-    {
-        $settings = Setting::getPublicMap();
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'name' => $settings['company_name'] ?? 'ApexBio Life Sciences',
-                'legalName' => $settings['legal_name'] ?? 'ApexBio Pharmaceuticals Ltd.',
-                'tagline' => $settings['tagline'] ?? '',
-                'description' => $settings['description'] ?? '',
-                'foundedYear' => $settings['founded_year'] ?? '2004',
-                'logoUrl' => $settings['logo_url'] ?? '',
-                'email' => $settings['company_email'] ?? '',
-                'enquiriesEmail' => $settings['enquiries_email'] ?? '',
-                'phone' => $settings['company_phone'] ?? '',
-                'whatsapp' => $settings['whatsapp_number'] ?? '',
-                'businessHours' => $settings['business_hours'] ?? '',
-                'drugLicenseNo' => $settings['drug_license_no'] ?? '',
-                'gstTaxId' => $settings['gst_tax_id'] ?? '',
-                'whoGmpCertified' => (bool) ($settings['who_gmp_certified'] ?? false),
-                'isoCertification' => $settings['iso_certification'] ?? '',
-                'headquarters' => $settings['headquarters_address'] ?? '',
-                'city' => $settings['city'] ?? '',
-                'state' => $settings['state'] ?? '',
-                'postalCode' => $settings['postal_code'] ?? '',
-                'country' => $settings['country'] ?? '',
-                'manufacturingUnit' => $settings['manufacturing_unit_address'] ?? '',
-                'website' => $settings['website_url'] ?? '',
-                'linkedin' => $settings['linkedin_url'] ?? '',
-                'twitter' => $settings['twitter_url'] ?? '',
-            ],
-        ]);
+        return back()->with('success', 'Business profile and settings saved successfully!');
     }
 
     // Infer group name from key name

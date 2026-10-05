@@ -1,23 +1,25 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Enums\ProductStatus;
 use App\Http\Controllers\Controller;
 use App\Jobs\UploadProductImageJob;
-use App\Models\Image;
+use App\Models\Category;
 use App\Models\Product;
 use App\Services\ImageKitService;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ProductController extends Controller
 {
     // Display a paginated listing of products with filters.
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): Response
     {
         $query = Product::query()
             ->with(['category:id,name,slug', 'primaryImage', 'images'])
@@ -45,32 +47,39 @@ class ProductController extends Controller
             $query->where('is_featured', $request->boolean('is_featured'));
         }
 
-        if ($request->boolean('all')) {
-            $products = $query->orderBy('brand_name')->get();
+        $perPage = (int) $request->query('per_page', 12);
+        $products = $query->latest('id')->paginate($perPage)->withQueryString();
 
-            return response()->json([
-                'success' => true,
-                'data' => $products,
-            ]);
-        }
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug']);
 
-        $perPage = (int) $request->query('per_page', 15);
-        $products = $query->latest('id')->paginate($perPage);
-
-        return response()->json([
-            'success' => true,
-            'data' => $products->items(),
-            'meta' => [
-                'current_page' => $products->currentPage(),
-                'last_page' => $products->lastPage(),
-                'per_page' => $products->perPage(),
-                'total' => $products->total(),
+        return Inertia::render('admin/product/ProductList', [
+            'products' => $products,
+            'categories' => $categories,
+            'filters' => [
+                'search' => $request->query('search', ''),
+                'category_id' => $request->query('category_id', ''),
+                'status' => $request->query('status', ''),
+                'is_featured' => $request->query('is_featured', ''),
             ],
         ]);
     }
 
+    // Show the form for creating a new product.
+    public function create(): Response
+    {
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug']);
+
+        return Inertia::render('admin/product/ProductForm', [
+            'categories' => $categories,
+        ]);
+    }
+
     // Store a newly created product in database.
-    public function store(Request $request, ImageKitService $imageKit): JsonResponse
+    public function store(Request $request, ImageKitService $imageKit): RedirectResponse
     {
         // Decode compositions if sent as a JSON string in multipart/form-data
         if ($request->has('compositions') && is_string($request->input('compositions'))) {
@@ -158,17 +167,11 @@ class ProductController extends Controller
             return $product;
         });
 
-        $product->load(['category:id,name,slug', 'compositions', 'images', 'primaryImage']);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Product created successfully.',
-            'data' => $product,
-        ], 201);
+        return redirect()->route('admin.products.index')->with('success', "Product \"{$product->brand_name}\" created successfully.");
     }
 
     // Display the specified product.
-    public function show(Product $product): JsonResponse
+    public function show(Product $product): Response
     {
         $product->load([
             'category:id,name,slug',
@@ -179,14 +182,33 @@ class ProductController extends Controller
             'updater:id,name,email',
         ]);
 
-        return response()->json([
-            'success' => true,
-            'data' => $product,
+        return Inertia::render('admin/product/ProductDetails', [
+            'product' => $product,
+        ]);
+    }
+
+    // Show the form for editing an existing product.
+    public function edit(Product $product): Response
+    {
+        $product->load([
+            'category:id,name,slug',
+            'compositions',
+            'images',
+            'primaryImage',
+        ]);
+
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug']);
+
+        return Inertia::render('admin/product/ProductForm', [
+            'product' => $product,
+            'categories' => $categories,
         ]);
     }
 
     // Update the specified product in database.
-    public function update(Request $request, Product $product, ImageKitService $imageKit): JsonResponse
+    public function update(Request $request, Product $product, ImageKitService $imageKit): RedirectResponse
     {
         if ($request->has('compositions') && is_string($request->input('compositions'))) {
             $decoded = json_decode($request->input('compositions'), true);
@@ -297,17 +319,11 @@ class ProductController extends Controller
             }
         });
 
-        $product->load(['category:id,name,slug', 'compositions', 'images', 'primaryImage']);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Product updated successfully.',
-            'data' => $product,
-        ]);
+        return redirect()->route('admin.products.index')->with('success', "Product \"{$product->brand_name}\" updated successfully.");
     }
 
     // Remove the specified product and its compositions and images.
-    public function destroy(Product $product, ImageKitService $imageKit): JsonResponse
+    public function destroy(Product $product, ImageKitService $imageKit): RedirectResponse
     {
         DB::transaction(function () use ($product, $imageKit) {
             // Delete compositions
@@ -326,14 +342,11 @@ class ProductController extends Controller
             $product->delete();
         });
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Product deleted successfully.',
-        ]);
+        return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully.');
     }
 
     // Update product status.
-    public function updateStatus(Request $request, Product $product): JsonResponse
+    public function updateStatus(Request $request, Product $product): RedirectResponse
     {
         $validated = $request->validate([
             'status' => ['required', Rule::enum(ProductStatus::class)],
@@ -344,10 +357,6 @@ class ProductController extends Controller
             'updated_by' => $request->user()?->id,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Product status updated successfully.',
-            'data' => $product,
-        ]);
+        return back()->with('success', 'Product status updated successfully.');
     }
 }

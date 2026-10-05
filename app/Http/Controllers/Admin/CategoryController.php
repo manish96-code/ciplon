@@ -1,18 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Enums\CategoryStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CategoryController extends Controller
 {
-    // Display a listing of categories.
-    public function index(Request $request): JsonResponse
+    // Display a listing of categories with search and status filtering.
+    public function index(Request $request): Response
     {
         $query = Category::query()
             ->with('parent:id,name,slug')
@@ -39,33 +41,33 @@ class CategoryController extends Controller
             }
         }
 
-        // Allow fetching all categories (for dropdowns/selectors)
-        if ($request->boolean('all')) {
-            $categories = $query->orderBy('name')->get();
-
-            return response()->json([
-                'success' => true,
-                'data' => $categories,
-            ]);
-        }
-
         $perPage = (int) $request->query('per_page', 15);
-        $categories = $query->latest('id')->paginate($perPage);
+        $categories = $query->latest('id')->paginate($perPage)->withQueryString();
 
-        return response()->json([
-            'success' => true,
-            'data' => $categories->items(),
-            'meta' => [
-                'current_page' => $categories->currentPage(),
-                'last_page' => $categories->lastPage(),
-                'per_page' => $categories->perPage(),
-                'total' => $categories->total(),
+        return Inertia::render('admin/category/CategoryList', [
+            'categories' => $categories,
+            'filters' => [
+                'search' => $request->query('search', ''),
+                'status' => $request->query('status', ''),
             ],
         ]);
     }
 
+    // Show the form for creating a new category.
+    public function create(): Response
+    {
+        $parentCategories = Category::query()
+            ->whereNull('parent_id')
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug']);
+
+        return Inertia::render('admin/category/CategoryForm', [
+            'parentCategories' => $parentCategories,
+        ]);
+    }
+
     // Store a newly created category in the database.
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:categories,name'],
@@ -74,7 +76,7 @@ class CategoryController extends Controller
             'status' => ['required', Rule::enum(CategoryStatus::class)],
         ]);
 
-        $category = Category::create([
+        Category::create([
             'name' => $validated['name'],
             'slug' => Category::generateUniqueSlug($validated['name']),
             'parent_id' => $validated['parent_id'] ?? null,
@@ -84,28 +86,28 @@ class CategoryController extends Controller
             'updated_by' => $request->user()?->id,
         ]);
 
-        $category->load('parent:id,name,slug');
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Category created successfully.',
-            'data' => $category,
-        ], 201);
+        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully.');
     }
 
-    // Display the specified category.
-    public function show(Category $category): JsonResponse
+    // Show the form for editing an existing category.
+    public function edit(Category $category): Response
     {
-        $category->load(['parent', 'children', 'creator:id,name,email', 'updater:id,name,email']);
+        $descendantIds = $category->descendantIds();
+        $excludedIds = array_merge([$category->id], $descendantIds);
 
-        return response()->json([
-            'success' => true,
-            'data' => $category,
+        $parentCategories = Category::query()
+            ->whereNotIn('id', $excludedIds)
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug']);
+
+        return Inertia::render('admin/category/CategoryForm', [
+            'category' => $category,
+            'parentCategories' => $parentCategories,
         ]);
     }
 
     // Update the specified category.
-    public function update(Request $request, Category $category): JsonResponse
+    public function update(Request $request, Category $category): RedirectResponse
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', Rule::unique('categories', 'name')->ignore($category->id)],
@@ -118,19 +120,11 @@ class CategoryController extends Controller
             $parentId = (int) $validated['parent_id'];
 
             if ($parentId === (int) $category->id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'A category cannot be its own parent.',
-                    'errors' => ['parent_id' => ['A category cannot be its own parent.']],
-                ], 422);
+                return back()->withErrors(['parent_id' => 'A category cannot be its own parent.']);
             }
 
             if (in_array($parentId, $category->descendantIds())) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Cannot assign a descendant category as parent.',
-                    'errors' => ['parent_id' => ['Cannot assign a descendant category as parent.']],
-                ], 422);
+                return back()->withErrors(['parent_id' => 'Cannot assign a descendant category as parent.']);
             }
         }
 
@@ -147,35 +141,23 @@ class CategoryController extends Controller
             'updated_by' => $request->user()?->id,
         ]);
 
-        $category->load('parent:id,name,slug');
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Category updated successfully.',
-            'data' => $category,
-        ]);
+        return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully.');
     }
 
     // Remove the specified category.
-    public function destroy(Category $category): JsonResponse
+    public function destroy(Category $category): RedirectResponse
     {
         if ($category->children()->exists()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cannot delete category with existing subcategories. Please reassign or delete subcategories first.',
-            ], 422);
+            return back()->with('error', 'Cannot delete category with existing subcategories. Please reassign or delete subcategories first.');
         }
 
         $category->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Category deleted successfully.',
-        ]);
+        return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully.');
     }
 
     // Update only the category status.
-    public function updateStatus(Request $request, Category $category): JsonResponse
+    public function updateStatus(Request $request, Category $category): RedirectResponse
     {
         $validated = $request->validate([
             'status' => ['required', Rule::enum(CategoryStatus::class)],
@@ -186,10 +168,6 @@ class CategoryController extends Controller
             'updated_by' => $request->user()?->id,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Category status updated successfully.',
-            'data' => $category,
-        ]);
+        return back()->with('success', 'Category status updated successfully.');
     }
 }
