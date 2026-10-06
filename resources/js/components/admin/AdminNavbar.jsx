@@ -5,15 +5,12 @@ export default function AdminNavbar({ onToggleSidebar }) {
   const { url, props } = usePage();
   const currentPath = url.split('?')[0];
 
-  // Load authenticated administrator profile
   const authUser = props.auth?.user || {};
   const adminName = authUser.name || 'Administrator';
-  const adminEmail = authUser.email || 'admin@apexbio.com';
+  const adminEmail = authUser.email || 'admin@ciplon.com';
 
-  // Determine if currently at dashboard root
   const isRootDashboard = currentPath === '/admin' || currentPath === '/admin/dashboard';
 
-  // Compute clean single page heading based on current path
   const getPageTitle = () => {
     const path = currentPath.toLowerCase();
     if (path === '/admin' || path === '/admin/dashboard') return 'Dashboard';
@@ -24,6 +21,12 @@ export default function AdminNavbar({ onToggleSidebar }) {
     if ((path.includes('/category/') || path.includes('/categories/')) && path.includes('/edit')) return 'Edit Category';
     if (path.includes('/category/add') || path.includes('/category/create') || path === '/admin/addcategory') return 'Add Category';
     if (path.startsWith('/admin/categor')) return 'Categories';
+    if (path.includes('/staff/create') || path.includes('/staff/add')) return 'Add Staff Member';
+    if (path.includes('/staff/') && path.includes('/edit')) return 'Edit Staff Member';
+    if (path.startsWith('/admin/staff')) return 'Staff & Team';
+    if (path.includes('/roles/create')) return 'Create Role';
+    if (path.includes('/roles/') && path.includes('/edit')) return 'Configure Permissions';
+    if (path.startsWith('/admin/roles')) return 'Roles & Permissions';
     if (path.includes('/therapeutic')) return 'Therapeutic Areas';
     if (path.includes('/enquiries')) return 'Enquiries';
     if (path.includes('/settings')) return 'Settings';
