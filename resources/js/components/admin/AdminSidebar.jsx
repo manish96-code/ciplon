@@ -1,41 +1,37 @@
-// AdminSidebar component with restructured professional navigation and logout
+// AdminSidebar component providing responsive navigation, collapsible mobile drawer, and active links
 import { Link, router, usePage } from '@inertiajs/react';
-import { 
-  LayoutDashboard, 
-  Package, 
-  PlusCircle, 
-  FolderTree, 
-  FolderPlus, 
-  Activity, 
-  Mail, 
-  Settings, 
-  ExternalLink, 
-  ShieldCheck, 
+import {
+  LayoutDashboard,
+  Package,
+  PlusCircle,
+  FolderTree,
+  FolderPlus,
+  Settings,
+  LogOut,
+  ExternalLink,
+  ShieldCheck,
   X,
-  LogOut
+  Activity,
+  Mail,
+  Users,
+  Shield
 } from 'lucide-react';
 
 export default function AdminSidebar({ isOpen, onClose }) {
   const { url, props } = usePage();
   const currentPath = url.split('?')[0];
 
-  // Load authenticated administrator profile from Inertia shared auth props
-  const authUser = props.auth?.user || {};
-  const adminName = authUser.name || 'Administrator';
-  const adminEmail = authUser.email || 'admin@apexbio.com';
+  const authUser = props.auth?.user;
+  const adminName = authUser?.name || 'Administrator';
+  const adminEmail = authUser?.email || 'admin@ciplon.com';
 
-  // Handle logout process via Laravel web session logout
   const handleLogout = () => {
     router.post('/logout');
   };
 
-  // Helper function to check exact active route
   const isCurrent = (path) => currentPath === path;
-
-  // Helper function to check parent route prefix
   const isParentActive = (prefix) => currentPath.startsWith(prefix);
 
-  // Grouped sidebar navigation sections
   const navigationSections = [
     {
       title: 'Dashboard',
@@ -83,21 +79,19 @@ export default function AdminSidebar({ isOpen, onClose }) {
       ],
     },
     {
-      title: 'Operations',
+      title: 'Staff & Access Control',
       items: [
         {
-          name: 'Therapeutic Areas',
-          path: '/admin/therapeutic-areas',
-          icon: Activity,
-          badge: 'Upcoming',
-          disabled: true,
+          name: 'Staff & Team',
+          path: '/admin/staff',
+          icon: Users,
+          active: isParentActive('/admin/staff'),
         },
         {
-          name: 'Enquiries',
-          path: '/admin/enquiries',
-          icon: Mail,
-          badge: 'Upcoming',
-          disabled: true,
+          name: 'Roles & Permissions',
+          path: '/admin/roles',
+          icon: Shield,
+          active: isParentActive('/admin/roles'),
         },
       ],
     },
@@ -135,7 +129,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
             </div>
             <div className="leading-tight">
               <span className="text-sm font-bold text-white tracking-tight block">
-                ApexBio
+                Ciplon
               </span>
               <span className="text-[10px] font-mono tracking-wider uppercase text-teal-400 block">
                 Pharma Admin
@@ -161,25 +155,6 @@ export default function AdminSidebar({ isOpen, onClose }) {
 
               {section.items.map((item) => {
                 const Icon = item.icon;
-
-                if (item.disabled) {
-                  return (
-                    <div
-                      key={item.name}
-                      className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-slate-400 cursor-not-allowed select-none opacity-60"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <Icon className="w-4 h-4 shrink-0 text-slate-400" />
-                        <span>{item.name}</span>
-                      </div>
-                      {item.badge && (
-                        <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/60">
-                          {item.badge}
-                        </span>
-                      )}
-                    </div>
-                  );
-                }
 
                 return (
                   <Link

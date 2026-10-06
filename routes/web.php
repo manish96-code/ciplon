@@ -3,7 +3,9 @@
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductCatalogController;
@@ -57,6 +59,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/products/{product}', [ProductController::class, 'update']);
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::patch('/products/{product}/status', [ProductController::class, 'updateStatus'])->name('products.status');
+
+    // Staff & Team Management
+    Route::resource('staff', StaffController::class);
+
+    // Roles & Permissions Management
+    Route::resource('roles', RoleController::class);
 
     // Settings
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');

@@ -3,9 +3,11 @@
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
+use Database\Seeders\RoleAndPermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Testing\AssertableInertia as Assert;
+use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
 
@@ -212,4 +214,74 @@ test('enquiry submission processes and redirects with flash message', function (
 
     $response->assertRedirect();
     $response->assertSessionHas('success');
+});
+
+test('admin can manage staff members and assign roles', function () {
+    $this->seed(RoleAndPermissionSeeder::class);
+    $admin = User::factory()->admin()->create();
+
+    // Access staff list
+    $this->actingAs($admin)
+        ->get('/admin/staff')
+        ->assertStatus(200)
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('admin/staff/StaffList')
+            ->has('staff')
+            ->has('roles')
+        );
+
+    // Create a new Medical Representative staff member
+    $createResponse = $this->actingAs($admin)->post('/admin/staff', [
+        'name' => 'Dr. Rakesh Verma',
+        'email' => 'rakesh.mr@ciplon.com',
+        'role' => 'mr',
+        'password' => 'secretPass123',
+    ]);
+    $createResponse->assertRedirect('/admin/staff');
+
+    $this->assertDatabaseHas('users', ['email' => 'rakesh.mr@ciplon.com']);
+    $mrUser = User::where('email', 'rakesh.mr@ciplon.com')->first();
+    expect($mrUser->hasRole('mr'))->toBeTrue();
+
+    // Update staff role to Manager
+    $updateResponse = $this->actingAs($admin)->put("/admin/staff/{$mrUser->id}", [
+        'name' => 'Dr. Rakesh Verma (Promoted)',
+        'email' => 'rakesh.mr@ciplon.com',
+        'role' => 'manager',
+    ]);
+    $updateResponse->assertRedirect('/admin/staff');
+
+    $mrUser->refresh();
+    expect($mrUser->hasRole('manager'))->toBeTrue();
+    expect($mrUser->name)->toBe('Dr. Rakesh Verma (Promoted)');
+
+    // Delete staff member
+    $deleteResponse = $this->actingAs($admin)->delete("/admin/staff/{$mrUser->id}");
+    $deleteResponse->assertRedirect('/admin/staff');
+    $this->assertDatabaseMissing('users', ['id' => $mrUser->id]);
+});
+
+test('admin can view roles list and create custom role with permissions', function () {
+    $this->seed(RoleAndPermissionSeeder::class);
+    $admin = User::factory()->admin()->create();
+
+    // Access roles list
+    $this->actingAs($admin)
+        ->get('/admin/roles')
+        ->assertStatus(200)
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('admin/roles/RoleList')
+            ->has('roles')
+        );
+
+    // Create a new role
+    $createResponse = $this->actingAs($admin)->post('/admin/roles', [
+        'name' => 'field_supervisor',
+        'permissions' => ['products.view', 'dcr.view', 'doctors.view'],
+    ]);
+    $createResponse->assertRedirect('/admin/roles');
+
+    $this->assertDatabaseHas('roles', ['name' => 'field_supervisor']);
+    $role = Role::findByName('field_supervisor');
+    expect($role->hasPermissionTo('dcr.view'))->toBeTrue();
 });
