@@ -43,14 +43,21 @@ class LoginController extends Controller
             ]);
         }
 
-        if ($user->role !== 'admin') {
+        $isAllowed = $user->hasRole(['super_admin', 'manager', 'mr', 'admin'])
+            || in_array($user->role, ['admin', 'manager', 'mr']);
+
+        if (! $isAllowed) {
             throw ValidationException::withMessages([
-                'email' => 'Access denied. Administrator privileges required.',
+                'email' => 'Access denied. Staff or administrator credentials required.',
             ]);
         }
 
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
+
+        if ($user->hasRole('mr') || $user->role === 'mr') {
+            return redirect()->intended('/mr/dashboard')->with('success', 'Signed into MR portal successfully.');
+        }
 
         return redirect()->intended('/admin')->with('success', 'Signed in successfully.');
     }

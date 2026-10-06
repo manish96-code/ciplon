@@ -14,8 +14,11 @@ class DatabaseSeeder extends Seeder
     // Seed the application database with administrator credentials and settings.
     public function run(): void
     {
+        // 1. Roles and Permissions
+        $this->call(RoleAndPermissionSeeder::class);
+
         // Primary Administrator Account
-        User::updateOrCreate(
+        $admin = User::updateOrCreate(
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'System Administrator',
@@ -24,6 +27,19 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        $admin->assignRole('super_admin');
+
+        // Demo Medical Representative (MR) Account
+        $mr = User::updateOrCreate(
+            ['email' => 'mr@ciplon.com'],
+            [
+                'name' => 'Rajesh Sharma',
+                'password' => Hash::make('123456789'),
+                'role' => 'mr',
+                'email_verified_at' => now(),
+            ]
+        );
+        $mr->assignRole('mr');
 
         // Secondary / Test Administrator Account
         User::updateOrCreate(
