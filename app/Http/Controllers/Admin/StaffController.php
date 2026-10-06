@@ -71,7 +71,7 @@ class StaffController extends Controller
         ]);
 
         $user = User::create([
-            'name' => $validated['name'],
+            'name' => ucwords(trim($validated['name'])),
             'email' => $validated['email'],
             'role' => $validated['role'],
             'password' => Hash::make($validated['password']),
@@ -92,7 +92,7 @@ class StaffController extends Controller
             'isEdit' => true,
             'staff' => [
                 'id' => $staff->id,
-                'name' => $staff->name,
+                'name' => ucwords($staff->name),
                 'email' => $staff->email,
                 'role' => $currentRole,
             ],
@@ -111,7 +111,7 @@ class StaffController extends Controller
         ]);
 
         $updateData = [
-            'name' => $validated['name'],
+            'name' => ucwords(trim($validated['name'])),
             'email' => $validated['email'],
             'role' => $validated['role'],
         ];

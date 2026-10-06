@@ -65,9 +65,9 @@ export default function ProductDetails({ product }) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 capitalize">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 capitalize">
                 {product.brand_name}
-              </h1>
+              </h2>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-teal-50 text-teal-700 border border-teal-200">
                 {product.status}
               </span>

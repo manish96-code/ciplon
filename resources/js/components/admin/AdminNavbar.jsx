@@ -9,38 +9,75 @@ export default function AdminNavbar({ onToggleSidebar }) {
   const adminName = authUser.name || 'Administrator';
   const adminEmail = authUser.email || 'admin@ciplon.com';
 
-  const isRootDashboard = currentPath === '/admin' || currentPath === '/admin/dashboard';
-
-  const getPageTitle = () => {
+  const getNavContext = () => {
     const path = currentPath.toLowerCase();
-    if (path === '/admin' || path === '/admin/dashboard') return 'Dashboard';
-    if (path.includes('/products/add') || path.includes('/products/create')) return 'Add New Product';
-    if (path.includes('/products/') && path.includes('/edit')) return 'Edit Product';
-    if (path.startsWith('/admin/products/') && path.split('/').filter(Boolean).length === 3) return 'Product Details';
-    if (path.startsWith('/admin/product')) return 'Products';
-    if ((path.includes('/category/') || path.includes('/categories/')) && path.includes('/edit')) return 'Edit Category';
-    if (path.includes('/category/add') || path.includes('/category/create') || path === '/admin/addcategory') return 'Add Category';
-    if (path.startsWith('/admin/categor')) return 'Categories';
-    if (path.includes('/staff/create') || path.includes('/staff/add')) return 'Add Staff Member';
-    if (path.includes('/staff/') && path.includes('/edit')) return 'Edit Staff Member';
-    if (path.startsWith('/admin/staff')) return 'Staff & Team';
-    if (path.includes('/roles/create')) return 'Create Role';
-    if (path.includes('/roles/') && path.includes('/edit')) return 'Configure Permissions';
-    if (path.startsWith('/admin/roles')) return 'Roles & Permissions';
-    if (path.includes('/therapeutic')) return 'Therapeutic Areas';
-    if (path.includes('/enquiries')) return 'Enquiries';
-    if (path.includes('/settings')) return 'Settings';
+
+    // Top-level sections (Primary sidebar destinations - NO back button)
+    if (path === '/admin' || path === '/admin/dashboard') {
+      return { title: 'Dashboard', parent: null };
+    }
+    if (path === '/admin/products') {
+      return { title: 'Products', parent: null };
+    }
+    if (path === '/admin/categories') {
+      return { title: 'Categories', parent: null };
+    }
+    if (path === '/admin/staff') {
+      return { title: 'Staff & Team', parent: null };
+    }
+    if (path === '/admin/roles') {
+      return { title: 'Roles & Permissions', parent: null };
+    }
+    if (path === '/admin/settings') {
+      return { title: 'Settings', parent: null };
+    }
+    if (path === '/admin/therapeutic') {
+      return { title: 'Therapeutic Areas', parent: null };
+    }
+    if (path === '/admin/enquiries') {
+      return { title: 'Enquiries', parent: null };
+    }
+
+    // Sub-pages with explicit parent link & breadcrumb
+    if (path.includes('/products/add') || path.includes('/products/create')) {
+      return { title: 'Add New Product', parent: { label: 'Products', url: '/admin/products' } };
+    }
+    if (path.includes('/products/') && path.includes('/edit')) {
+      return { title: 'Edit Product', parent: { label: 'Products', url: '/admin/products' } };
+    }
+    if (path.startsWith('/admin/products/') && path.split('/').filter(Boolean).length === 3) {
+      return { title: 'Product Details', parent: { label: 'Products', url: '/admin/products' } };
+    }
+    if ((path.includes('/category/') || path.includes('/categories/')) && path.includes('/edit')) {
+      return { title: 'Edit Category', parent: { label: 'Categories', url: '/admin/categories' } };
+    }
+    if (path.includes('/category/add') || path.includes('/category/create') || path === '/admin/addcategory') {
+      return { title: 'Add Category', parent: { label: 'Categories', url: '/admin/categories' } };
+    }
+    if (path.includes('/staff/create') || path.includes('/staff/add')) {
+      return { title: 'Add Staff Member', parent: { label: 'Staff & Team', url: '/admin/staff' } };
+    }
+    if (path.includes('/staff/') && path.includes('/edit')) {
+      return { title: 'Edit Staff Member', parent: { label: 'Staff & Team', url: '/admin/staff' } };
+    }
+    if (path.includes('/roles/create')) {
+      return { title: 'Create Role', parent: { label: 'Roles & Permissions', url: '/admin/roles' } };
+    }
+    if (path.includes('/roles/') && path.includes('/edit')) {
+      return { title: 'Configure Permissions', parent: { label: 'Roles & Permissions', url: '/admin/roles' } };
+    }
 
     const parts = currentPath.split('/').filter(Boolean);
     const lastPart = parts[parts.length - 1] || 'Dashboard';
-    return lastPart.charAt(0).toUpperCase() + lastPart.slice(1);
+    const fallbackTitle = lastPart.charAt(0).toUpperCase() + lastPart.slice(1);
+    return { title: fallbackTitle, parent: null };
   };
 
-  const pageTitle = getPageTitle();
+  const navContext = getNavContext();
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30">
-      <div className="flex items-center gap-3 min-w-0">
+    <header className="h-16 bg-white border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+      <div className="flex items-center gap-2.5 min-w-0">
         <button
           type="button"
           onClick={onToggleSidebar}
@@ -50,21 +87,34 @@ export default function AdminNavbar({ onToggleSidebar }) {
           <Menu className="w-5 h-5" />
         </button>
 
-        {!isRootDashboard && (
-          <button
-            type="button"
-            onClick={() => window.history.back()}
-            className="p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
-            title="Go back"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="w-4.5 h-4.5 stroke-[2.2]" />
-          </button>
+        {navContext.parent ? (
+          <div className="flex items-center gap-2 min-w-0">
+            <Link
+              href={navContext.parent.url}
+              className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0"
+              title={`Back to ${navContext.parent.label}`}
+              aria-label={`Back to ${navContext.parent.label}`}
+            >
+              <ArrowLeft className="w-4 h-4 stroke-[2.2]" />
+            </Link>
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm min-w-0">
+              <Link
+                href={navContext.parent.url}
+                className="hidden sm:inline hover:text-slate-900 transition-colors truncate font-medium text-slate-500"
+              >
+                {navContext.parent.label}
+              </Link>
+              <span className="hidden sm:inline text-slate-300">/</span>
+              <h1 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight truncate">
+                {navContext.title}
+              </h1>
+            </div>
+          </div>
+        ) : (
+          <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight truncate">
+            {navContext.title}
+          </h1>
         )}
-
-        <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight truncate">
-          {pageTitle}
-        </h1>
       </div>
 
       <div className="flex items-center gap-3">
@@ -77,7 +127,7 @@ export default function AdminNavbar({ onToggleSidebar }) {
         </Link>
 
         <div className="flex items-center gap-2.5 pl-3 border-l border-slate-200">
-          <div className="w-8 h-8 rounded-full bg-teal-700 text-white flex items-center justify-center text-xs font-bold">
+          <div className="w-8 h-8 rounded-full bg-teal-700 text-white flex items-center justify-center text-xs font-bold shadow-sm">
             {adminName.charAt(0).toUpperCase()}
           </div>
           <div className="hidden sm:block text-left leading-tight">

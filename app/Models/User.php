@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -25,6 +26,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Ensure name is always capitalized in Title Case
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value ? ucwords($value) : '',
+            set: fn (?string $value) => $value ? ucwords(trim($value)) : '',
+        );
     }
 
     // Helper to check if user has admin privileges

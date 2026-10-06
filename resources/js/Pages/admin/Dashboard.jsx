@@ -29,9 +29,9 @@ export default function Dashboard({ stats = {}, recentProducts = [] }) {
               <Activity className="w-3.5 h-3.5" />
               <span>ApexBio Enterprise Platform</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
               Formulation & Catalog Dashboard
-            </h1>
+            </h2>
             <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
               Monitor active medicine monographs, chemical compositions, and category distribution.
             </p>
