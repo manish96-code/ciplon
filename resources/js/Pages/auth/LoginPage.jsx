@@ -20,7 +20,7 @@ export default function LoginPage() {
     });
   };
 
-  const companyName = companyProfile?.company_name || companyProfile?.name || 'ApexBio Life Sciences';
+  const companyName = companyProfile?.company_name || companyProfile?.name || 'Ciplon Life Sciences';
   const logoUrl = companyProfile?.logo_url || companyProfile?.logoUrl || '';
 
   return (

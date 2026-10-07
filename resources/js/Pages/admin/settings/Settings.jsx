@@ -200,7 +200,7 @@ export default function Settings({ grouped = {}, settings: initialSettings = {} 
                   type="text"
                   value={settings.company_name}
                   onChange={(e) => handleChange('company_name', e.target.value)}
-                  placeholder="e.g. ApexBio Life Sciences"
+                  placeholder="e.g. Ciplon Life Sciences"
                   className="w-full px-3.5 py-2 bg-slate-50/50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
                 />
               </div>
@@ -213,7 +213,7 @@ export default function Settings({ grouped = {}, settings: initialSettings = {} 
                   type="text"
                   value={settings.legal_name}
                   onChange={(e) => handleChange('legal_name', e.target.value)}
-                  placeholder="e.g. ApexBio Pharmaceuticals Ltd."
+                  placeholder="e.g. Ciplon Pharmaceuticals Ltd."
                   className="w-full px-3.5 py-2 bg-slate-50/50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
                 />
               </div>
@@ -401,7 +401,7 @@ export default function Settings({ grouped = {}, settings: initialSettings = {} 
                   type="email"
                   value={settings.company_email}
                   onChange={(e) => handleChange('company_email', e.target.value)}
-                  placeholder="corporate@apexbio-pharma.com"
+                  placeholder="corporate@ciplon.com"
                   className="w-full px-3.5 py-2 bg-slate-50/50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
                 />
               </div>
@@ -414,7 +414,7 @@ export default function Settings({ grouped = {}, settings: initialSettings = {} 
                   type="email"
                   value={settings.enquiries_email}
                   onChange={(e) => handleChange('enquiries_email', e.target.value)}
-                  placeholder="enquiry@apexbio-pharma.com"
+                  placeholder="enquiry@ciplon.com"
                   className="w-full px-3.5 py-2 bg-slate-50/50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
                 />
               </div>
@@ -539,7 +539,7 @@ export default function Settings({ grouped = {}, settings: initialSettings = {} 
                   type="text"
                   value={settings.manufacturing_unit_address}
                   onChange={(e) => handleChange('manufacturing_unit_address', e.target.value)}
-                  placeholder="e.g. ApexBio Formulation Plant 1, Pharma SEZ, Industrial Zone"
+                  placeholder="e.g. Ciplon Formulation Plant 1, Pharma SEZ, Industrial Zone"
                   className="w-full px-3.5 py-2 bg-slate-50/50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
                 />
               </div>
@@ -568,7 +568,7 @@ export default function Settings({ grouped = {}, settings: initialSettings = {} 
                   type="url"
                   value={settings.website_url}
                   onChange={(e) => handleChange('website_url', e.target.value)}
-                  placeholder="https://apexbio-pharma.com"
+                  placeholder="https://ciplon.com"
                   className="w-full px-3.5 py-2 bg-slate-50/50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
                 />
               </div>
@@ -581,7 +581,7 @@ export default function Settings({ grouped = {}, settings: initialSettings = {} 
                   type="url"
                   value={settings.linkedin_url}
                   onChange={(e) => handleChange('linkedin_url', e.target.value)}
-                  placeholder="https://linkedin.com/company/apexbio-pharma"
+                  placeholder="https://linkedin.com/company/ciplon"
                   className="w-full px-3.5 py-2 bg-slate-50/50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
                 />
               </div>
@@ -594,7 +594,7 @@ export default function Settings({ grouped = {}, settings: initialSettings = {} 
                   type="url"
                   value={settings.twitter_url}
                   onChange={(e) => handleChange('twitter_url', e.target.value)}
-                  placeholder="https://x.com/apexbio_pharma"
+                  placeholder="https://x.com/ciplon_pharma"
                   className="w-full px-3.5 py-2 bg-slate-50/50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
                 />
               </div>

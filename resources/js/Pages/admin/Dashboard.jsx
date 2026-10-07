@@ -27,7 +27,7 @@ export default function Dashboard({ stats = {}, recentProducts = [] }) {
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-teal-600 mb-1">
               <Activity className="w-3.5 h-3.5" />
-              <span>ApexBio Enterprise Platform</span>
+              <span>Ciplon Enterprise Platform</span>
             </div>
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
               Formulation & Catalog Dashboard

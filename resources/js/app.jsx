@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { Toaster } from 'react-hot-toast';
 
 createInertiaApp({
-  title: (title) => (title ? `${title} - ApexBio` : 'ApexBio Pharmaceuticals — Advancing Healthcare Through Quality & Innovation'),
+  title: (title) => (title ? `${title} - Ciplon` : 'Ciplon Pharmaceuticals — Advancing Healthcare Through Quality & Innovation'),
   resolve: (name) => {
     const pages = import.meta.glob('./Pages/**/*.jsx', { eager: true });
     const page = pages[`./Pages/${name}.jsx`];

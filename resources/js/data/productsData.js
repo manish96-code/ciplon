@@ -6,8 +6,8 @@
 export const featuredProducts = [
   {
     id: 1,
-    productCode: "APX-PAR-650",
-    brandName: "APEX-PARA 650",
+    productCode: "CIP-PAR-650",
+    brandName: "CIPLON-PARA 650",
     genericName: "Paracetamol IP",
     category: "Analgesics & Antipyretics",
     therapeuticArea: "Pain Management",
