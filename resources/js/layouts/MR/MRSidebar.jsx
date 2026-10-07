@@ -27,7 +27,7 @@ export default function MRSidebar({ isOpen, onClose }) {
   // Navigation Items according to Phase 1 Spec
   const navItems = [
     { label: 'Dashboard', href: '/mr/dashboard', icon: LayoutDashboard, active: currentPath === '/mr/dashboard', enabled: true },
-    { label: 'Doctors', href: '#', icon: UserCheck, enabled: false },
+    { label: 'Doctors', href: '/mr/doctors', icon: UserCheck, active: currentPath.startsWith('/mr/doctors'), enabled: true },
     { label: 'Visits', href: '#', icon: MapPin, enabled: false },
     { label: 'Products', href: '#', icon: Pill, enabled: false },
     { label: 'Samples', href: '#', icon: Gift, enabled: false },

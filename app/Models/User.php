@@ -42,4 +42,9 @@ class User extends Authenticatable
     {
         return $this->hasRole(['super_admin', 'admin']) || $this->role === 'admin';
     }
+
+    public function doctors(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Doctor::class, 'user_id');
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\MR;
 
 use App\Http\Controllers\Controller;
+use App\Models\Doctor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -23,8 +24,11 @@ class MRDashboardController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        // Phase 1: Return zero / empty metrics adhering to the API specification
-        // until future modules (Doctors, Visits, Samples, Targets) are implemented.
+        $userId = $request->user()->id;
+        $activeDoctors = Doctor::forUser($userId)->active()->get();
+        $totalDoctors = $activeDoctors->count();
+        $targetVisits = (int) $activeDoctors->sum('target_frequency_per_month');
+
         $dashboardData = [
             'summary' => [
                 'today_visits' => 0,
@@ -35,11 +39,11 @@ class MRDashboardController extends Controller
             'performance' => [
                 'visits' => [
                     'completed' => 0,
-                    'target' => 0,
+                    'target' => $targetVisits,
                 ],
                 'doctors' => [
                     'covered' => 0,
-                    'target' => 0,
+                    'target' => $totalDoctors,
                 ],
                 'product_promotions' => [
                     'completed' => 0,
