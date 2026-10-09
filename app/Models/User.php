@@ -47,4 +47,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Doctor::class, 'user_id');
     }
+
+    public function visits(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Visit::class, 'user_id');
+    }
 }

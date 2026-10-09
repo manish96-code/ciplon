@@ -14,7 +14,7 @@ import {
   Activity,
   Award
 } from 'lucide-react';
-import MRLayout from '../../Layouts/MR/MRLayout';
+import MRLayout from '../../layouts/MR/MRLayout';
 import api from '../../services/api';
 
 export default function Dashboard() {

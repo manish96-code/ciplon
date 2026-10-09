@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MR\MRDashboardController;
 use App\Http\Controllers\MR\MRDoctorController;
+use App\Http\Controllers\MR\MRVisitController;
 use App\Http\Controllers\ProductCatalogController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -86,4 +87,5 @@ Route::get('/storage/{path}', function (string $path) {
 Route::middleware(['auth', 'mr'])->prefix('mr')->name('mr.')->group(function () {
     Route::get('/dashboard', [MRDashboardController::class, 'show'])->name('dashboard');
     Route::get('/doctors', [MRDoctorController::class, 'show'])->name('doctors');
+    Route::get('/visits', [MRVisitController::class, 'show'])->name('visits');
 });

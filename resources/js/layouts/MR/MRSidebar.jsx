@@ -24,11 +24,23 @@ export default function MRSidebar({ isOpen, onClose }) {
   const authUser = props.auth?.user || {};
   const userName = authUser.name || 'Medical Representative';
 
-  // Navigation Items according to Phase 1 Spec
+  // Navigation Items
   const navItems = [
-    { label: 'Dashboard', href: '/mr/dashboard', icon: LayoutDashboard, active: currentPath === '/mr/dashboard', enabled: true },
-    { label: 'Doctors', href: '/mr/doctors', icon: UserCheck, active: currentPath.startsWith('/mr/doctors'), enabled: true },
-    { label: 'Visits', href: '#', icon: MapPin, enabled: false },
+    { 
+      label: 'Dashboard', 
+      href: '/mr/dashboard', 
+      icon: LayoutDashboard, 
+      active: currentPath === '/mr/dashboard', 
+      enabled: true 
+    },
+    { 
+      label: 'Doctors', 
+      href: '/mr/doctors', 
+      icon: UserCheck, 
+      active: currentPath === '/mr/doctors' || currentPath.startsWith('/mr/doctors'), 
+      enabled: true 
+    },
+    { label: 'Visits', href: '/mr/visits', icon: MapPin, active: currentPath === '/mr/visits' || currentPath.startsWith('/mr/visits'), enabled: true },
     { label: 'Products', href: '#', icon: Pill, enabled: false },
     { label: 'Samples', href: '#', icon: Gift, enabled: false },
     { label: 'Follow-ups', href: '#', icon: CalendarClock, enabled: false },
@@ -90,8 +102,12 @@ export default function MRSidebar({ isOpen, onClose }) {
                 <Link
                   key={item.label}
                   href={item.href}
-                  onClick={onClose}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  onClick={() => {
+                    if (isOpen && typeof onClose === 'function') {
+                      onClose();
+                    }
+                  }}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     item.active 
                       ? 'bg-teal-50 text-teal-800 shadow-xs' 
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'

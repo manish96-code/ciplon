@@ -92,4 +92,9 @@ class Doctor extends Model
 
         return $query->where('territory', $territory);
     }
+
+    public function visits(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Visit::class, 'doctor_id');
+    }
 }
