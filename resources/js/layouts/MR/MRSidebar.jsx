@@ -41,7 +41,7 @@ export default function MRSidebar({ isOpen, onClose }) {
       enabled: true 
     },
     { label: 'Visits', href: '/mr/visits', icon: MapPin, active: currentPath === '/mr/visits' || currentPath.startsWith('/mr/visits'), enabled: true },
-    { label: 'Products', href: '#', icon: Pill, enabled: false },
+    { label: 'Products', href: '/mr/products', icon: Pill, active: currentPath === '/mr/products' || currentPath.startsWith('/mr/products'), enabled: true },
     { label: 'Samples', href: '#', icon: Gift, enabled: false },
     { label: 'Follow-ups', href: '#', icon: CalendarClock, enabled: false },
     { label: 'Targets', href: '#', icon: Target, enabled: false },

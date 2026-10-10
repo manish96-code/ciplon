@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MR\MRDashboardController;
 use App\Http\Controllers\MR\MRDoctorController;
+use App\Http\Controllers\MR\MRProductController;
 use App\Http\Controllers\MR\MRVisitController;
 use App\Http\Controllers\ProductCatalogController;
 use Illuminate\Support\Facades\Route;
@@ -90,4 +91,5 @@ Route::middleware(['auth', 'mr'])->prefix('mr')->name('mr.')->group(function () 
     Route::get('/doctors/create', [MRDoctorController::class, 'create'])->name('doctors.create');
     Route::get('/doctors/{id}/edit', [MRDoctorController::class, 'edit'])->name('doctors.edit');
     Route::get('/visits', [MRVisitController::class, 'show'])->name('visits');
+    Route::get('/products', [MRProductController::class, 'show'])->name('products');
 });

@@ -13,7 +13,7 @@ export default function MRHeader({ onToggleSidebar, title = 'MR Dashboard' }) {
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
     }

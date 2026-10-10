@@ -372,13 +372,7 @@ export default function Doctors({ initialFilters = {} }) {
                 Clear Filters
               </button>
             ) : (
-              <button
-                type="button"
-                onClick={handleOpenAdd}
-                className="px-4 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold transition-colors cursor-pointer"
-              >
-                + Add First Doctor
-              </button>
+              <Link href="/mr/doctors/create" className="px-4 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold transition-colors cursor-pointer">+ Add First Doctor</Link>
             )}
           </div>
         ) : viewMode === 'grid' ? (

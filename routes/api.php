@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\MR\MRDashboardController;
 use App\Http\Controllers\MR\MRDoctorController;
+use App\Http\Controllers\MR\MRProductController;
 use App\Http\Controllers\MR\MRVisitController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,4 +24,6 @@ Route::middleware(['web', 'auth', 'mr'])->prefix('v1/mr')->group(function () {
     Route::get('/visits/{id}', [MRVisitController::class, 'showVisit']);
     Route::put('/visits/{id}', [MRVisitController::class, 'update']);
     Route::delete('/visits/{id}', [MRVisitController::class, 'destroy']);
+    Route::get('/products', [MRProductController::class, 'index']);
+    Route::get('/products/{id}', [MRProductController::class, 'showProduct']);
 });
