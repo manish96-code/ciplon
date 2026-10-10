@@ -11,9 +11,7 @@ use Inertia\Response;
 
 class MRDoctorController extends Controller
 {
-    /**
-     * Render the MR Doctors list view.
-     */
+    // Render the MR Doctors list view.
     public function show(Request $request): Response
     {
         return Inertia::render('mr/Doctors', [
@@ -27,8 +25,28 @@ class MRDoctorController extends Controller
     }
 
     /**
-     * API: List doctors belonging to the authenticated MR with filters.
+     * Render the dedicated Create Doctor page.
      */
+    public function create(): Response
+    {
+        return Inertia::render('mr/DoctorForm', [
+            'mode' => 'create',
+        ]);
+    }
+
+    // Render the dedicated Edit Doctor page.
+    public function edit(Request $request, int $id): Response
+    {
+        // Ensure doctor exists and belongs to authenticated MR
+        Doctor::forUser($request->user()->id)->findOrFail($id);
+
+        return Inertia::render('mr/DoctorForm', [
+            'mode' => 'edit',
+            'doctorId' => $id,
+        ]);
+    }
+
+    // API: List doctors belonging to the authenticated MR with filters.
     public function index(Request $request): JsonResponse
     {
         $userId = $request->user()->id;

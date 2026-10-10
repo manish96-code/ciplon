@@ -242,3 +242,56 @@ test('mr user cannot access or delete doctors belonging to another mr user', fun
     // MR1's doctor still exists
     $this->assertDatabaseHas('doctors', ['id' => $doctorOfMr1->id]);
 });
+
+
+test('mr user can access create doctor page', function () {
+    $mrUser = User::factory()->create(['role' => 'mr']);
+    $mrUser->assignRole('mr');
+
+    $response = $this->actingAs($mrUser)->get('/mr/doctors/create');
+
+    $response->assertStatus(200);
+});
+
+test('mr user can access edit doctor page for their own doctor', function () {
+    $mrUser = User::factory()->create(['role' => 'mr']);
+    $mrUser->assignRole('mr');
+
+    $doctor = Doctor::create([
+        'user_id' => $mrUser->id,
+        'name' => 'Dr. Edit Page Test',
+        'specialization' => 'Cardiology',
+        'clinic_hospital_name' => 'Cardio Care',
+        'territory' => 'Central Hub',
+        'phone' => '+91 98201 44556',
+        'tier' => 'core',
+        'target_frequency_per_month' => 4,
+    ]);
+
+    $response = $this->actingAs($mrUser)->get("/mr/doctors/{$doctor->id}/edit");
+
+    $response->assertStatus(200);
+});
+
+test('mr user cannot access edit doctor page for doctor belonging to another mr', function () {
+    $mr1 = User::factory()->create(['role' => 'mr']);
+    $mr1->assignRole('mr');
+
+    $mr2 = User::factory()->create(['role' => 'mr']);
+    $mr2->assignRole('mr');
+
+    $doctor = Doctor::create([
+        'user_id' => $mr1->id,
+        'name' => 'Dr. Exclusive to MR1',
+        'specialization' => 'Neurology',
+        'clinic_hospital_name' => 'Neuro Clinic',
+        'territory' => 'Suburbs',
+        'phone' => '+91 98201 77889',
+        'tier' => 'class_a',
+        'target_frequency_per_month' => 3,
+    ]);
+
+    $response = $this->actingAs($mr2)->get("/mr/doctors/{$doctor->id}/edit");
+
+    $response->assertStatus(404);
+});

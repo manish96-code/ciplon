@@ -87,5 +87,7 @@ Route::get('/storage/{path}', function (string $path) {
 Route::middleware(['auth', 'mr'])->prefix('mr')->name('mr.')->group(function () {
     Route::get('/dashboard', [MRDashboardController::class, 'show'])->name('dashboard');
     Route::get('/doctors', [MRDoctorController::class, 'show'])->name('doctors');
+    Route::get('/doctors/create', [MRDoctorController::class, 'create'])->name('doctors.create');
+    Route::get('/doctors/{id}/edit', [MRDoctorController::class, 'edit'])->name('doctors.edit');
     Route::get('/visits', [MRVisitController::class, 'show'])->name('visits');
 });
